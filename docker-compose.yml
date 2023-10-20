@@ -1,0 +1,29 @@
+# create docker compose for the project
+version: '3.3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: bash -c "flask --app app run --host=0.0.0.0 --port=8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: flaskr
+      MYSQL_USER: flaskr
+      MYSQL_PASSWORD: flaskr123
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - "./scripts/schema.sql:/docker-entrypoint-initdb.d/1.sql"
+
